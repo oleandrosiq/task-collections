@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FiCheck, FiChevronLeft, FiPlus } from 'react-icons/fi';
+import { IoEllipsisHorizontal, IoEllipsisVertical } from 'react-icons/io5';
 import router from 'next/router';
 
 import { useForm } from 'react-hook-form';
@@ -8,16 +9,17 @@ import * as yup from 'yup';
 
 import { CollectionData, TaskData } from '../../types/collection';
 import { Button } from '../../components/Button';
+import { Dropdown } from '../../components/Dropdown';
 
 import { Container, Header, Tasks, Task, InputAddContainer, ButtonCheck } from './styles';
 import { createTask, updateTask } from '../../services/task';
-import { getCollectionById } from '../../services/collection';
+import { deleteCollection, getCollectionById } from '../../services/collection';
 
 const schema = yup.object().shape({
   description: yup.string().required('A descrição é obrigatória').max(60, 'A descrição deve ter no máximo 60 caracteres'),
 });
 
-export function Collection({ id}: { id: string }) {
+export function Collection({ id }: { id: string }) {
   const [collection, setCollection] = useState<CollectionData>(null);
 
   const { register, handleSubmit, reset, clearErrors, formState: { errors } } = useForm({
@@ -33,6 +35,24 @@ export function Collection({ id}: { id: string }) {
     const tasksDone = collection?.tasks.filter((task) => task.status === 'done');
     return tasksDone;
   }, [collection]);
+
+  const handleDeleteCollection = useCallback(() => {
+    deleteCollection(id);
+    router.push('/dashboard');
+  }, [id]);
+
+  const optionsDropdown = useMemo(() => {
+    return [
+      { 
+        handleOnClick: () => {}, 
+        label: 'Edit Collection',
+      },
+      { 
+        handleOnClick: handleDeleteCollection, 
+        label: 'Delete Collection',
+      },
+    ];
+  }, []);
 
   function handleCreateTask(data: { description: string }) {
     const collectionUpdated = createTask({ description: data.description, collection_id: collection.id });
@@ -81,7 +101,13 @@ export function Collection({ id}: { id: string }) {
 
           <h1>{collection?.name}</h1>
         </span>
+
+        <Dropdown 
+          options={optionsDropdown} 
+          icon={<IoEllipsisHorizontal size={22} color='var(--gray)' />} 
+        />
       </Header>
+
       <Tasks>
         <h2>Tasks - {tasks?.length || '0'}</h2>
 
@@ -109,7 +135,7 @@ export function Collection({ id}: { id: string }) {
         <h2>Completed - {tasksDone?.length || '0'}</h2>
 
         { tasksDone?.map(task => (
-          <Task variant='done'>
+          <Task variant='done' key={task.id}>
             <ButtonCheck done={collection?.color} onClick={() => handleUndoTask(task)}>
               <FiCheck size={19} color='var(--black)' />
             </ButtonCheck>

@@ -14,7 +14,7 @@ export const Header = styled('header', {
 
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'spcae-between',
+  justifyContent: 'space-between',
 
   '> span': {
     display: 'flex',

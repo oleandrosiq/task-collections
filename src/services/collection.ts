@@ -49,9 +49,18 @@ export function getCollectionById(id: string): CollectionData | null {
   const collections = getCollections();
   const collection = collections.find(collection => collection.id === id);
   
-  console.log({ id });
-
   if (!collection) return null; 
 
   return collection;
+}
+
+export function saveCollections(collesctions: CollectionData[]) {
+  localStorage.setItem('collections', JSON.stringify(collesctions));
+}
+
+export function deleteCollection(id: string) {
+  const collections = getCollections();
+  const updatedCollections = collections.filter(collection => collection.id !== id);
+
+  saveCollections(updatedCollections);
 }
