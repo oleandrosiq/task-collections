@@ -4,7 +4,7 @@ export const Container = styled('button', {
   padding: '1rem 2.4rem',
 
   border: 0,
-  borderRadius: '1rem',
+  borderRadius: '0.5rem',
   background: '#c9c9c9',
 
   fontSize: '1.7rem',

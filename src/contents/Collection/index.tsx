@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FiCheck, FiChevronLeft, FiPlus } from 'react-icons/fi';
 import { IoEllipsisHorizontal, IoEllipsisVertical } from 'react-icons/io5';
 import router from 'next/router';
@@ -8,22 +8,44 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
 import { CollectionData, TaskData } from '../../types/collection';
+import { createTask, deleteTask, updateTask } from '../../services/task';
+import { deleteCollection, getCollectionById, updateCollection } from '../../services/collection';
+
+import { MainModal, MainModalHandles } from '../../components/MainModal';
+import { PaletteColors, PaletteColorsHandles } from '../../components/PaletteColors';
+import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 import { Dropdown } from '../../components/Dropdown';
 
-import { Container, Header, Tasks, Task, InputAddContainer, ButtonCheck } from './styles';
-import { createTask, updateTask } from '../../services/task';
-import { deleteCollection, getCollectionById } from '../../services/collection';
+import { Container, Header, Tasks, Task, InputAddContainer, ButtonCheck, ContentModal, ButtonsModal } from './styles';
+import toast from 'react-hot-toast';
 
 const schema = yup.object().shape({
   description: yup.string().required('A descrição é obrigatória').max(60, 'A descrição deve ter no máximo 60 caracteres'),
 });
 
+const schemaEdit = yup.object().shape({
+  name: yup.string().required('O nome da coleção é obrigatório'),
+});
+
 export function Collection({ id }: { id: string }) {
   const [collection, setCollection] = useState<CollectionData>(null);
 
+  const modalRef = useRef<MainModalHandles>(null);
+  const paletteRef = useRef<PaletteColorsHandles>(null);
+
   const { register, handleSubmit, reset, clearErrors, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
+  });
+
+  const { 
+    register: registerEdit, 
+    handleSubmit: handleSubmitEdit, 
+    reset: resetEdit, 
+    clearErrors: clearErrorsEdit, 
+    formState: { errors: errorsEdit } 
+  } = useForm({
+    resolver: yupResolver(schemaEdit),
   });
 
   const tasks = useMemo(() => {
@@ -41,18 +63,13 @@ export function Collection({ id }: { id: string }) {
     router.push('/dashboard');
   }, [id]);
 
-  const optionsDropdown = useMemo(() => {
-    return [
-      { 
-        handleOnClick: () => {}, 
-        label: 'Edit Collection',
-      },
-      { 
-        handleOnClick: handleDeleteCollection, 
-        label: 'Delete Collection',
-      },
-    ];
-  }, []);
+  const handleUpdateCollection = useCallback(({ name }) => {
+    const color = paletteRef.current?.getColorSelect();
+    const collectionUpdated = updateCollection({ id: collection?.id, name, color });
+   
+    setCollection(collectionUpdated);
+    modalRef.current?.closeModal();
+  }, [collection]);
 
   function handleCreateTask(data: { description: string }) {
     const collectionUpdated = createTask({ description: data.description, collection_id: collection.id });
@@ -77,6 +94,25 @@ export function Collection({ id }: { id: string }) {
 
     setCollection(collectionUpdated);
   }
+
+  function handleDeleteTask(task: TaskData) {
+    const collectionUpdated = deleteTask(task);
+    setCollection(collectionUpdated);
+    toast.success('Task deleted successfully');
+  }
+
+  const optionsDropdown = useMemo(() => {
+    return [
+      { 
+        handleOnClick: () => modalRef.current?.openModal(), 
+        label: 'Edit Collection',
+      },
+      { 
+        handleOnClick: handleDeleteCollection, 
+        label: 'Delete Collection',
+      },
+    ];
+  }, []);
 
   useEffect(() => {
     function loadCollection() {
@@ -113,8 +149,25 @@ export function Collection({ id }: { id: string }) {
 
         { tasks?.map(task => (
           <Task key={task.id}>
-            <ButtonCheck border={collection?.color} onClick={() => handleCompletedTask(task)} />
-            <p>{task.description}</p>
+            <span>
+              <ButtonCheck border={collection?.color} onClick={() => handleCompletedTask(task)} />
+              <p>{task.description}</p>
+            </span>
+
+            <Dropdown 
+              options={[
+                {
+                  label: 'Edit',
+                  handleOnClick: () => {}
+                },
+                {
+                  label: 'Delete',
+                  handleOnClick: () => handleDeleteTask(task),
+                },
+              ]} 
+              icon={<IoEllipsisVertical size={22} color='var(--gray)' />} 
+              side='right'
+            />
           </Task>
         )) }
 
@@ -136,13 +189,57 @@ export function Collection({ id }: { id: string }) {
 
         { tasksDone?.map(task => (
           <Task variant='done' key={task.id}>
-            <ButtonCheck done={collection?.color} onClick={() => handleUndoTask(task)}>
-              <FiCheck size={19} color='var(--black)' />
-            </ButtonCheck>
-            <p>{task.description}</p>
+            <span>
+              <ButtonCheck done={collection?.color} onClick={() => handleUndoTask(task)}>
+                <FiCheck size={19} color='var(--black)' />
+              </ButtonCheck>
+              <p>{task.description}</p>
+            </span>
+
+            <Dropdown 
+              options={[{
+                label: 'Delete',
+                handleOnClick: () => handleDeleteTask(task),
+              },]} 
+              icon={<IoEllipsisVertical size={22} color='var(--gray)' />} 
+              side='right'
+            />
           </Task>
         )) }
       </Tasks>
+
+      <MainModal 
+        titleModal='Edit Collection' 
+        ref={modalRef}
+      >
+        <ContentModal onSubmit={handleSubmitEdit(handleUpdateCollection)}>
+          <Input 
+            label='Name' 
+            placeholder='My Collection'
+            defaultValue={collection?.name}
+            {...registerEdit('name')}
+            error={errorsEdit.name}
+            onClick={() => clearErrorsEdit('name')}
+          />
+
+          <PaletteColors ref={paletteRef} defaultColor={collection?.color} />
+
+          <ButtonsModal>
+            <Button 
+              type='submit'
+              textButton='Update' 
+              size='md'
+            />
+
+            <Button 
+              textButton='Cancel' 
+              size='md'
+              variant='secondary'
+              onClick={() => modalRef.current?.closeModal()}
+            />
+          </ButtonsModal>
+        </ContentModal>
+      </MainModal>
     </Container>
   );
 }

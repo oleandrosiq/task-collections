@@ -1,15 +1,20 @@
 import { useState, forwardRef, useImperativeHandle, useCallback, HTMLAttributes } from 'react';  
 import { defaultColors } from '../../styles/Colors';
+import { ColorData } from '../../types/collection';
 
 import { Container, ItemColor } from './styles';
 
 export interface PaletteColorsHandles {
-  getColorSelect: () => string;
+  getColorSelect: () => ColorData;
   resetColorSelect: () => string;
 };
 
-function PaletteColorsBase({ }, ref) {
-  const [colorSelect, setColorSelect] = useState<string>('purple');
+interface PaletteColorsProps {
+  defaultColor?: ColorData;
+}
+
+function PaletteColorsBase({ defaultColor = 'purple' }: PaletteColorsProps, ref) {
+  const [colorSelect, setColorSelect] = useState<string>(defaultColor);
 
   const getColorSelect = useCallback(() => {
     return colorSelect;

@@ -52,7 +52,7 @@ export const DropdownMenuContent = styled(DropdownMenu.Content, {
   padding: 5,
 
   borderRadius: 6,
-  backgroundColor: 'var(--shape)',
+  backgroundColor: 'var(--dropdown)',
   boxShadow:'0px 10px 38px -10px rgba(22, 23, 24, 0.35), 0px 10px 20px -15px rgba(22, 23, 24, 0.2)',
   
   '@media (prefers-reduced-motion: no-preference)': {
@@ -88,7 +88,7 @@ export const DropdownMenuItem = styled(DropdownMenu.Item, {
   cursor: 'pointer',
 
   '&:hover': {
-    backgroundColor: 'var(--shape-hover)',
+    backgroundColor: 'var(--dropdown-hover)',
   },
 
   '& + div': {

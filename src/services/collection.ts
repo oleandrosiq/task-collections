@@ -1,4 +1,4 @@
-import { CollectionData, ColorData } from '../types/collection';
+import { CollectionData, ColorData, TaskData } from '../types/collection';
 
 interface CreateCollectionProps {
   name: string;
@@ -29,14 +29,31 @@ export function saveCollection(collection: CollectionData): CollectionData[] {
   return updatedCollections;
 }
 
-export function updateCollection(collection: CollectionData): CollectionData[] {
+interface UpdateCollectionProps {
+  id: string;
+  name?: string;
+  color?: ColorData;
+  tasks?: TaskData[];
+};
+
+export function updateCollection({ id, name, color, tasks }: UpdateCollectionProps): CollectionData {
   const collections = getCollections();
 
-  const updatedCollections = collections.map(c => c.id === collection.id ? collection : c);
+  const collection = getCollectionById(id);
+
+  const collectionUpdated  = {
+    ...collection,
+  };
+
+  if (name) collectionUpdated.name = name;
+  if (color) collectionUpdated.color = color;
+  if (tasks) collectionUpdated.tasks = tasks;
+
+  const updatedCollections = collections.map(c => c.id === id ? collectionUpdated : c);
 
   localStorage.setItem('collections', JSON.stringify(updatedCollections));
 
-  return updatedCollections;
+  return collectionUpdated;
 }
 
 export function getCollections(): CollectionData[] {

@@ -99,12 +99,12 @@ export function Dashboard() {
           <Buttons>
             <Button 
               type='submit'
-              textButton='Salvar'
+              textButton='Create'
               size='sm'
             />
 
             <Button 
-              textButton='Cancelar'
+              textButton='Cancel'
               size='sm'
               variant='secondary'
               onClick={() => modalRef.current?.closeModal()}

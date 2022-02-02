@@ -12,6 +12,9 @@ export const { styled, css, keyframes } = createStitches({
     mb: (value) => ({
       marginBottom: value,
     }),
+    ml: (value) => ({
+      marginLeft: value,
+    }),
     pl: (value) => ({
       paddingLeft: value,
     }),

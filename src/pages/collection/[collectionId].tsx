@@ -24,7 +24,7 @@ export default function Collection() {
   return (
     <React.Fragment>
       <Head>
-        <title>{collection ? `Collection - ${collection?.name}` : 'Collection'}</title>
+        <title>{collection ? `${collection?.name} - Collection ` : 'Collection'}</title>
       </Head>
       <Content id={id} />
     </React.Fragment>

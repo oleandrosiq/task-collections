@@ -2,7 +2,7 @@ import { Colors } from '../../styles/Colors';
 import { styled } from '../../styles/styled';
 
 export const Container = styled('div', {
-  maxWidth: '65rem',
+  maxWidth: '75rem',
   padding: '2rem 2rem 5rem',
 
   margin: '5.5rem auto 0',
@@ -48,28 +48,37 @@ export const Task = styled('div', {
 
   display: 'flex',
   alignItems: 'center',
+  justifyContent: 'space-between',
   gap: '1.4rem',
+  
+  '> span': {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '1.5rem',
 
-  '> p': {
-    fontSize: '1.6rem',
+    '> p': {
+      fontSize: '1.6rem',
+    },
   },
 
   variants: {
     variant: {
       done: {
-        '> p': {
-          position: 'relative',
-
-          '&::before': {
-            content: '',
-            width: '100%',
-            height: '0.2rem',
-            background: 'var(--white)',
-
-            position: 'absolute',
-            top: '50%',
-            left: '0',
-            transform: 'translateY(-50%)',
+        '> span': {
+          '> p': {
+            position: 'relative',
+  
+            '&::before': {
+              content: '',
+              width: '100%',
+              height: '0.2rem',
+              background: 'var(--white)',
+  
+              position: 'absolute',
+              top: '50%',
+              left: '0',
+              transform: 'translateY(-50%)',
+            }
           }
         }
       }
@@ -206,4 +215,21 @@ export const InputAddContainer = styled('form', {
       }
     }
   }
+});
+
+export const ContentModal = styled('form', {
+  width: '100%',
+  mt: '3rem',  
+
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '3.5rem',
+});
+
+export const ButtonsModal = styled('div', {
+  ml: 'auto',
+
+  display: 'flex',
+  alignItems: 'center',
+  gap: '2rem',
 });

@@ -20,13 +20,6 @@ export function Header() {
               </span>
             </Li>
           </Link>
-
-          <Li variant={selectTab === 'collection' ? 'active' : null}> 
-            <span>
-              <MdDashboard size={20} color='var(--white)' />
-              <p>Collection</p>
-            </span>
-          </Li>
         </ul>
       </Nav>
 

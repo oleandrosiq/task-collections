@@ -1,5 +1,5 @@
 import { CollectionData, TaskData } from "../types/collection";
-import { getCollectionById, updateCollection } from "./collection";
+import { getCollectionById, saveCollection, updateCollection } from "./collection";
 
 export function createTask({ description, collection_id }: { description: string, collection_id: string }): CollectionData {
   const task = {
@@ -17,12 +17,8 @@ export function createTask({ description, collection_id }: { description: string
 export function saveTask(task: TaskData): CollectionData {
   const collection = getCollectionById(task.collection_id);
 
-  const collectionUpdated = {
-    ...collection,
-    tasks: [...collection.tasks, task],
-  };
+  const collectionUpdated = updateCollection({ id: task.collection_id, tasks: [...collection.tasks, task] });
 
-  updateCollection(collectionUpdated);
   return collectionUpdated;
 }
 
@@ -35,5 +31,18 @@ export function updateTask(task: TaskData): CollectionData {
   };
 
   updateCollection(collectionUpdated);
+  return collectionUpdated;
+}
+
+export function deleteTask(task: TaskData): CollectionData {
+  const collection = getCollectionById(task.collection_id);
+
+  const collectionUpdated = {
+    ...collection,
+    tasks: collection.tasks.filter(t => t.id !== task.id),
+  };
+
+  updateCollection(collectionUpdated);
+
   return collectionUpdated;
 }

@@ -30,6 +30,8 @@ const Styles = globalCss({
     '--shape': '#21212b',
     '--shape-dark': '#1e1e29',
     '--shape-hover': '#272732',
+    '--dropdown': '#1e1e29',
+    '--dropdown-hover': '#262630',
   },
 
   body: {
