@@ -226,7 +226,19 @@ export const ContentModal = styled('form', {
   gap: '3.5rem',
 });
 
+export const ContentModalDelete = styled('div', {
+  width: '100%',
+  marginTop: '3.5rem',
+
+  '> p': {
+    fontSize: '1.7rem',
+    marginBottom: '2.5rem',
+    opacity: 0.75,
+  }
+});
+
 export const ButtonsModal = styled('div', {
+  width: 'max-content',
   ml: 'auto',
 
   display: 'flex',

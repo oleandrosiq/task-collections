@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FiCheck, FiChevronLeft, FiPlus } from 'react-icons/fi';
 import { IoEllipsisHorizontal, IoEllipsisVertical } from 'react-icons/io5';
+import toast from 'react-hot-toast';
 import router from 'next/router';
 
 import { useForm } from 'react-hook-form';
@@ -17,8 +18,17 @@ import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 import { Dropdown } from '../../components/Dropdown';
 
-import { Container, Header, Tasks, Task, InputAddContainer, ButtonCheck, ContentModal, ButtonsModal } from './styles';
-import toast from 'react-hot-toast';
+import { 
+  Container, 
+  Header, 
+  Tasks, 
+  Task, 
+  InputAddContainer, 
+  ButtonCheck, 
+  ContentModal,
+  ButtonsModal, 
+  ContentModalDelete 
+} from './styles';
 
 const schema = yup.object().shape({
   description: yup.string().required('A descrição é obrigatória').max(60, 'A descrição deve ter no máximo 60 caracteres'),
@@ -32,6 +42,7 @@ export function Collection({ id }: { id: string }) {
   const [collection, setCollection] = useState<CollectionData>(null);
 
   const modalRef = useRef<MainModalHandles>(null);
+  const modalDeleteRef = useRef<MainModalHandles>(null);
   const paletteRef = useRef<PaletteColorsHandles>(null);
 
   const { register, handleSubmit, reset, clearErrors, formState: { errors } } = useForm({
@@ -98,7 +109,7 @@ export function Collection({ id }: { id: string }) {
   function handleDeleteTask(task: TaskData) {
     const collectionUpdated = deleteTask(task);
     setCollection(collectionUpdated);
-    toast.success('Task deleted successfully');
+    toast.success('Task deleted');
   }
 
   const optionsDropdown = useMemo(() => {
@@ -108,7 +119,7 @@ export function Collection({ id }: { id: string }) {
         label: 'Edit Collection',
       },
       { 
-        handleOnClick: handleDeleteCollection, 
+        handleOnClick: () => modalDeleteRef.current?.openModal(), 
         label: 'Delete Collection',
       },
     ];
@@ -239,6 +250,35 @@ export function Collection({ id }: { id: string }) {
             />
           </ButtonsModal>
         </ContentModal>
+      </MainModal>
+
+      <MainModal 
+        titleModal='Delete Collection'
+        ref={modalDeleteRef}
+      >
+        <ContentModalDelete>
+          <p>
+            Are you sure you want to delete? <br />
+            This action cannot be undone.
+          </p>
+
+          <ButtonsModal>
+            <Button 
+              type='submit'
+              textButton='Delete' 
+              size='md'
+              variant='delete'
+              onClick={handleDeleteCollection}
+            />
+
+            <Button 
+              textButton='Cancel' 
+              size='md'
+              variant='primary'
+              onClick={() => modalRef.current?.closeModal()}
+            />
+          </ButtonsModal>
+        </ContentModalDelete>
       </MainModal>
     </Container>
   );

@@ -36,6 +36,11 @@ export const Container = styled('button', {
         },
       },
 
+      delete: {
+        background: 'var(--red-dark)',
+        color: 'var(--white)',
+      },
+
       iconPrimary: {
         color: 'var(--white)',
         background: 'var(--shape)',

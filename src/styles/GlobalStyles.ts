@@ -19,6 +19,7 @@ const Styles = globalCss({
     '--yellow': '#dbbe56',
     '--orange': '#e39264',
     '--red': '#d25a61',
+    '--red-dark': '#FF4040',
     '--blue': '#3b82f6',
     '--green': '#61faa9',
 

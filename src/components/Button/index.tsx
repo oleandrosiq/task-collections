@@ -4,7 +4,7 @@ import { Container } from './styles';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   textButton?: string;
-  variant?: 'primary' | 'secondary' | 'iconPrimary' | 'iconSecondary';
+  variant?: 'primary' | 'secondary' | 'delete' | 'iconPrimary' | 'iconSecondary';
   size?: 'sm' | 'md' | 'lg' | 'icon';
   icon?: ReactElement;
   hasIcon?: boolean;
