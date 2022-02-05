@@ -23,7 +23,7 @@ export function Header() {
         </ul>
       </Nav>
 
-      <Image src='https://github.com/oleandrosiq.png' alt='Image Profile' />
+      <Image src='https://super.abril.com.br/wp-content/uploads/2018/07/5672f6af82bee174ca03d239thinkstockphotos-153831740.jpeg' alt='Image Profile' />
     </Container>
   );
 }
