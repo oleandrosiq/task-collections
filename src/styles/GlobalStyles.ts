@@ -28,7 +28,7 @@ const Styles = globalCss({
     '--background-button': '#3d3c50', 
     '--background-button-hover': '#47465a',
     '--background': '#181820',
-    '--shape': '#21212b',
+    '--shape': 'rgb(29, 29, 39)',
     '--shape-dark': '#1e1e29',
     '--shape-hover': '#272732',
     '--dropdown': '#1e1e29',

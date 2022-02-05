@@ -35,17 +35,30 @@ const schema = yup.object().shape({
 });
 
 const schemaEdit = yup.object().shape({
-  name: yup.string().required('O nome da coleção é obrigatório'),
+  name: yup.string().required('A descrição é obrigatório'),
 });
 
 export function Collection({ id }: { id: string }) {
   const [collection, setCollection] = useState<CollectionData>(null);
+  const [task, setTask] = useState<TaskData>(null);
 
   const modalRef = useRef<MainModalHandles>(null);
   const modalDeleteRef = useRef<MainModalHandles>(null);
+  const modalEditTaskRef = useRef<MainModalHandles>(null);
+
   const paletteRef = useRef<PaletteColorsHandles>(null);
 
   const { register, handleSubmit, reset, clearErrors, formState: { errors } } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  const { 
+    register: registerEditTask, 
+    handleSubmit: handleSubmitEditTask, 
+    reset: resetEditTask, 
+    clearErrors: clearErrorsEditTask, 
+    formState: { errors: errorsEditTask, } 
+  } = useForm({
     resolver: yupResolver(schema),
   });
 
@@ -80,6 +93,7 @@ export function Collection({ id }: { id: string }) {
    
     setCollection(collectionUpdated);
     modalRef.current?.closeModal();
+    resetEdit();
   }, [collection]);
 
   function handleCreateTask(data: { description: string }) {
@@ -110,6 +124,21 @@ export function Collection({ id }: { id: string }) {
     const collectionUpdated = deleteTask(task);
     setCollection(collectionUpdated);
     toast.success('Task deleted');
+  }
+
+  function handleUpdateTask(data: { description: string }) {
+    const newTask = {
+      ...task,
+      description: data.description,
+    };
+
+    const collectionUpdate = updateTask(newTask);
+
+    setCollection(collectionUpdate);
+    modalEditTaskRef.current?.closeModal();
+    setTask(null);
+    resetEditTask();
+    toast.success('Your task was updated.');
   }
 
   const optionsDropdown = useMemo(() => {
@@ -169,7 +198,10 @@ export function Collection({ id }: { id: string }) {
               options={[
                 {
                   label: 'Edit',
-                  handleOnClick: () => {}
+                  handleOnClick: () =>  {
+                    modalEditTaskRef.current?.openModal();
+                    setTask(task);
+                  },
                 },
                 {
                   label: 'Delete',
@@ -275,10 +307,42 @@ export function Collection({ id }: { id: string }) {
               textButton='Cancel' 
               size='md'
               variant='primary'
-              onClick={() => modalRef.current?.closeModal()}
+              onClick={() => modalDeleteRef.current?.closeModal()}
             />
           </ButtonsModal>
         </ContentModalDelete>
+      </MainModal>
+
+      <MainModal
+        titleModal='Edit Task'
+        ref={modalEditTaskRef}
+      >
+        <ContentModal onSubmit={handleSubmitEditTask(handleUpdateTask)}>
+          <Input 
+            type='text' 
+            label='New task'
+            placeholder='Description task' 
+            defaultValue={task?.description}
+            {...registerEditTask('description')}
+            error={errorsEditTask.description}
+            onClick={() => clearErrorsEditTask('description')}
+          />
+
+          <ButtonsModal>
+            <Button 
+              type='submit'
+              textButton='Edit'
+              variant='primary'
+            />
+
+            <Button 
+              type='button'
+              textButton='Cancel'
+              variant='secondary'
+              onClick={() => modalEditTaskRef.current?.closeModal()}
+            />
+          </ButtonsModal>
+        </ContentModal>
       </MainModal>
     </Container>
   );

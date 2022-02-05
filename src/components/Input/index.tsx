@@ -1,4 +1,4 @@
-import { forwardRef, InputHTMLAttributes } from 'react';
+import { forwardRef, InputHTMLAttributes, CSSProperties } from 'react';
 import { FieldError } from 'react-hook-form';
 
 import { Container, Wrapper } from './styles';
@@ -6,11 +6,12 @@ import { Container, Wrapper } from './styles';
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: FieldError;
   label?: string;
+  styleContainer?: CSSProperties;
 };
 
-function InputBase({ label, error, placeholder, ...rest }: InputProps, ref) {
+function InputBase({ label, error, placeholder, styleContainer, ...rest }: InputProps, ref) {
   return (
-    <Wrapper>
+    <Wrapper style={styleContainer}>
       {!!label && <label>{label}</label>}
       <Container
         ref={ref}
