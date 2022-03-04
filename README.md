@@ -38,9 +38,9 @@ The following tools were used in this project:
 
 ```bash
 # Clone this project
-$ git clone https://github.com/oleandrosiq/api-contacts
+$ git clone https://github.com/oleandrosiq/youtube-collections
 # Access
-$ cd api-contacts
+$ cd youtube-collections
 # Install dependencies
 $ yarn
 # Run the project
